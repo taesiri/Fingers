@@ -17,7 +17,7 @@ import random
 
 import random
 
-# Expanded list of 50 artistic styles for hand depictions
+# Expanded list of 100 artistic styles for hand depictions
 styles = [
     "A hyper-realistic close-up of a human hand with futuristic cybernetic enhancements",
     "A digital painting of a human hand adorned with steampunk gears and brass elements",
@@ -68,7 +68,57 @@ styles = [
     "A glitch art-inspired digital image of a human hand with pixelated distortions",
     "A vibrant, expressive brush-stroke painting of a human hand in a modern art style",
     "A surrealist image of a human hand morphing into a cascade of abstract shapes",
-    "A neon-drenched futuristic scene of a human hand set against a backdrop of digital rain"
+    "A neon-drenched futuristic scene of a human hand set against a backdrop of digital rain",
+    "A high-resolution CGI render of a human hand with ultra-realistic textures",
+    "A mystical illustration of a human hand entwined with magical runes and symbols",
+    "A soft pastel drawing of a human hand surrounded by floating, delicate orbs",
+    "An atmospheric foggy scene featuring a human hand emerging from the mist",
+    "A richly detailed ink and watercolor hybrid of a human hand with elaborate tattoos",
+    "A digital art piece featuring a human hand with cyberpunk neon glow and digital glitches",
+    "A vibrant abstract painting of a human hand with splashes of bold color",
+    "A serene, meditative depiction of a human hand in a calm, monochromatic setting",
+    "A highly stylized pop art version of a human hand with comic book flair",
+    "A meticulously detailed graphite drawing of a human hand in dynamic pose",
+    "A contemporary digital sculpture rendering of a human hand with smooth surfaces",
+    "A vintage comic strip illustration of a human hand in an action scene",
+    "A mysterious, shadowy portrait of a human hand with selective lighting",
+    "A playful, cartoonish drawing of a human hand with exaggerated features",
+    "A surreal, Dali-inspired melting clock effect integrated into a human hand",
+    "A vibrant, modern street art mural of a human hand in an urban setting",
+    "A futuristic holographic projection of a human hand in a digital space",
+    "A soft-focus, dreamlike illustration of a human hand with blurred, gentle edges",
+    "A richly textured impasto painting of a human hand with thick, expressive brushstrokes",
+    "A digital illustration of a human hand with fractal patterns and kaleidoscopic colors",
+    "A luminous, ethereal scene of a human hand surrounded by cosmic dust and starlight",
+    "A cyberpunk-inspired graphic novel panel featuring a human hand with glowing accents",
+    "A surreal, double-exposure image combining a human hand with natural landscapes",
+    "A modern minimalist line art drawing of a human hand with a single continuous stroke",
+    "A futuristic biomechanical rendering of a human hand integrated with organic circuits",
+    "A vibrant, textured digital painting of a human hand with explosive color contrasts",
+    "A haunting, monochromatic photograph-like image of a human hand with stark contrasts",
+    "A digital mosaic of a human hand constructed from intricate, tiny geometric shapes",
+    "A conceptual, abstract expressionist depiction of a human hand with chaotic forms",
+    "A detailed pen and ink illustration of a human hand with ornate, swirling details",
+    "A high-speed motion capture image of a human hand in dynamic, blurred motion",
+    "A mystical, otherworldly digital painting of a human hand with shimmering auras",
+    "A crisp, hyper-detailed technical drawing of a human hand with anatomical precision",
+    "A layered digital collage of a human hand interwoven with urban and natural motifs",
+    "A vibrant, modern vector art rendition of a human hand with bold lines and flat colors",
+    "A dreamy, ethereal watercolor painting of a human hand with soft pastel tones",
+    "A stark, minimalist digital composition featuring a solitary human hand silhouette",
+    "A retro-inspired pixel art depiction of a human hand with a nostalgic vibe",
+    "A high-energy, graffiti-infused digital art piece of a human hand in action",
+    "A surreal, imaginative illustration of a human hand that defies natural form",
+    "A visually striking digital portrait of a human hand with hyper-saturated colors",
+    "A futuristic digital render of a human hand emerging from a data matrix",
+    "A textured, expressive oil painting of a human hand with dramatic brushwork",
+    "A cinematic, film noir style image of a human hand with deep shadows and high contrast",
+    "A luminous, glowing digital illustration of a human hand with a halo of light",
+    "A vibrant, abstract geometric composition centered on a human hand silhouette",
+    "A moody, atmospheric digital painting of a human hand enveloped in twilight hues",
+    "A richly detailed baroque portrait of a human hand with intricate ornamental details",
+    "A stylized, futuristic illustration of a human hand with digital glitch effects",
+    "A fantastical, dreamlike digital artwork of a human hand adorned with surreal motifs"
 ]
 
 # Expanded list of finger variations with 13 different configurations
@@ -96,6 +146,7 @@ conditions = [
     "with intricate details and subtle shadows",
     "in a mysterious, foggy atmosphere"
 ]
+
 
 # Generate all possible combinations (Total combinations: 50 x 13 x 5 = 3250)
 all_prompts = [
