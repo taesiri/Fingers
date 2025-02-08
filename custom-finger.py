@@ -142,54 +142,74 @@ def generate_images_on_gpu(gpu_id, prompt_queue, width=1024, height=1024, guidan
     pipe, good_vae = setup_pipeline(gpu_id)
     
     while True:
-        # Get next task from queue
-        task = prompt_queue.get()
-        if task is None:  # Poison pill to stop the process
-            break
+        try:
+            # Get next task from queue
+            task = prompt_queue.get()
+            if task is None:  # Poison pill to stop the process
+                break
+                
+            prompt, output_dir, start_idx = task
             
-        prompt, output_dir, start_idx = task
-        
-        print(f"GPU {gpu_id}: Memory allocated: {torch.cuda.memory_allocated(gpu_id) / 1e9:.2f}GB")
-        
-        # Store images in memory
-        images_to_save = []
-        
-        for i in range(25):  # Generate 25 images per prompt
-            seed = random.randint(0, MAX_SEED)
-            generator = torch.Generator(device=f"cuda:{gpu_id}").manual_seed(seed)
+            print(f"GPU {gpu_id}: Processing prompt: {prompt}")
+            print(f"GPU {gpu_id}: Output directory: {output_dir}")
             
-            print(f"GPU {gpu_id}: Generating image {i+1}/25 with seed: {seed}")
+            # Verify output directory exists
+            if not os.path.exists(output_dir):
+                print(f"GPU {gpu_id}: Creating output directory: {output_dir}")
+                os.makedirs(output_dir, exist_ok=True)
             
-            # Keep track of the last image in the iteration
-            last_image = None
-            for img in pipe.flux_pipe_call_that_returns_an_iterable_of_images(
-                    prompt=prompt,
-                    guidance_scale=guidance_scale,
-                    num_inference_steps=num_inference_steps,
-                    width=width,
-                    height=height,
-                    generator=generator,
-                    output_type="pil",
-                    good_vae=good_vae,
-                ):
-                    # Only keep the last image (fully denoised)
-                    last_image = img
+            print(f"GPU {gpu_id}: Memory allocated: {torch.cuda.memory_allocated(gpu_id) / 1e9:.2f}GB")
             
-            # Store only the final denoised image
-            if last_image is not None:
-                images_to_save.append((last_image, f"image_{i+1}_seed_{seed}.png"))
-                print(f"GPU {gpu_id}: Generated image {i+1}")
-        
-        # Batch save all final images for this prompt
-        for img, filename in images_to_save:
-            output_path = os.path.join(output_dir, filename)
-            img.save(output_path)
-        print(f"GPU {gpu_id}: Saved batch of {len(images_to_save)} images to {output_dir}")
-        
-        # Clear memory
-        images_to_save.clear()
-        torch.cuda.empty_cache()
-        print(f"GPU {gpu_id}: Memory after cleanup: {torch.cuda.memory_allocated(gpu_id) / 1e9:.2f}GB")
+            # Store images in memory
+            images_to_save = []
+            
+            for i in range(25):  # Generate 25 images per prompt
+                seed = random.randint(0, MAX_SEED)
+                generator = torch.Generator(device=f"cuda:{gpu_id}").manual_seed(seed)
+                
+                print(f"GPU {gpu_id}: Generating image {i+1}/25 with seed: {seed}")
+                
+                # Keep track of the last image in the iteration
+                last_image = None
+                for img in pipe.flux_pipe_call_that_returns_an_iterable_of_images(
+                        prompt=prompt,
+                        guidance_scale=guidance_scale,
+                        num_inference_steps=num_inference_steps,
+                        width=width,
+                        height=height,
+                        generator=generator,
+                        output_type="pil",
+                        good_vae=good_vae,
+                    ):
+                        # Only keep the last image (fully denoised)
+                        last_image = img
+                
+                # Store only the final denoised image
+                if last_image is not None:
+                    images_to_save.append((last_image, f"image_{i+1}_seed_{seed}.png"))
+                    print(f"GPU {gpu_id}: Generated image {i+1}")
+                else:
+                    print(f"GPU {gpu_id}: Warning - No image generated for iteration {i+1}")
+            
+            # Batch save all final images for this prompt
+            print(f"GPU {gpu_id}: Attempting to save {len(images_to_save)} images...")
+            for img, filename in images_to_save:
+                output_path = os.path.join(output_dir, filename)
+                try:
+                    img.save(output_path)
+                    print(f"GPU {gpu_id}: Successfully saved {filename}")
+                except Exception as e:
+                    print(f"GPU {gpu_id}: Error saving {filename}: {str(e)}")
+            
+            print(f"GPU {gpu_id}: Completed saving batch of {len(images_to_save)} images to {output_dir}")
+            
+            # Clear memory
+            images_to_save.clear()
+            torch.cuda.empty_cache()
+            print(f"GPU {gpu_id}: Memory after cleanup: {torch.cuda.memory_allocated(gpu_id) / 1e9:.2f}GB")
+            
+        except Exception as e:
+            print(f"GPU {gpu_id}: Error processing task: {str(e)}")
 
 def generate_images():
     # Set up multiprocessing
