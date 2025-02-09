@@ -9,13 +9,8 @@ import json
 import re
 from multiprocessing import Process, Queue
 import torch.multiprocessing as mp
-
+import random
 MAX_SEED = np.iinfo(np.int32).max
-
-
-import random
-
-import random
 
 # Expanded list of 100 artistic styles for hand depictions
 styles = [
@@ -121,19 +116,48 @@ styles = [
     "A fantastical, dreamlike digital artwork of a human hand adorned with surreal motifs"
 ]
 
-# Expanded list of finger variations with 13 different configurations
+# # Expanded list of finger variations with 13 different configurations
+# finger_variations = [
+#     # "with no fingers",
+#     # "with one oversized finger",
+#     # "with two delicate fingers",
+#     # "with three uniquely shaped fingers",
+#     # "with four perfectly arranged fingers",
+#     # "with five natural fingers",
+#     # "with six elongated fingers",
+#     "with seven gracefully curved fingers",
+#     "with eight slender fingers",
+#     "with nine surreal digits",
+#     "with ten bizarrely arranged fingers",
+#     "with eleven extra digits",
+#     "with twelve whimsical fingers"
+# ]
+
+# # Additional artistic conditions or moods
+# conditions = [
+#     "in vibrant neon colors",
+#     "under dramatic lighting",
+#     "set against a cosmic background",
+#     "with intricate details and subtle shadows",
+#     "in a mysterious, foggy atmosphere"
+# ]
+
+
+# # Generate all possible combinations (Total combinations: 50 x 13 x 5 = 3250)
+# all_prompts = [
+#     f"{style} {finger}, {condition}."
+#     for style in styles
+#     for finger in finger_variations
+#     for condition in conditions
+# ]
+
+
+# Finger variations ensuring more than five digits
 finger_variations = [
-    "with no fingers",
-    "with one oversized finger",
-    "with two delicate fingers",
-    "with three uniquely shaped fingers",
-    "with four perfectly arranged fingers",
-    "with five natural fingers",
-    "with six elongated fingers",
     "with seven gracefully curved fingers",
-    "with eight slender fingers",
+    "with eight slender digits",
     "with nine surreal digits",
-    "with ten bizarrely arranged fingers",
+    "with ten bizarrely arranged digits",
     "with eleven extra digits",
     "with twelve whimsical fingers"
 ]
@@ -147,17 +171,24 @@ conditions = [
     "in a mysterious, foggy atmosphere"
 ]
 
+def generate_prompt():
+    """
+    Generates a prompt instructing the creation of an image featuring a hand-like appendage,
+    reminiscent of a human hand, but with extra digits.
+    """
+    style = random.choice(styles)
+    finger = random.choice(finger_variations)
+    condition = random.choice(conditions)
+    
+    prompt = (
+        f"many fingers, extra fingers, {style} image of a hand-like appendage reminiscent of a human hand but defying typical anatomy "
+        f"by featuring {finger}, rendered {condition}."
+    )
+    return prompt
 
-# Generate all possible combinations (Total combinations: 50 x 13 x 5 = 3250)
-all_prompts = [
-    f"{style} {finger}, {condition}."
-    for style in styles
-    for finger in finger_variations
-    for condition in conditions
-]
-
+all_prompts = [generate_prompt() for _ in range(1000)]
 # Randomly select 200 unique prompts from the complete set
-selected_prompts = random.sample(all_prompts, 200)
+selected_prompts = random.sample(all_prompts, 10)
 
 # Print the 200 generated prompts
 for prompt in selected_prompts:
@@ -214,7 +245,7 @@ def generate_images_on_gpu(gpu_id, prompt_queue, width=1024, height=1024, guidan
             # Store images in memory
             images_to_save = []
             
-            for i in range(25):  # Generate 25 images per prompt
+            for i in range(8):  # Generate 25 images per prompt
                 seed = random.randint(0, MAX_SEED)
                 generator = torch.Generator(device=f"cuda:{gpu_id}").manual_seed(seed)
                 
